@@ -11,18 +11,51 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <script src="/resources/js/jquery-3.3.1.min.js"></script>
+<script src="/resources/js/reply.js"></script>
 <script type="text/javascript">
+	console.log("===============");
+	console.log("JS TEST");
+
+	var bnoValue = '<c:out value="${board.bno}"/>';
+	//댓글리스트테스트
+	/* replyService.getList ({bno:bnoValue, page:1},function(list){
+		for(var i =0 , len = list.length||0; i<len; i++){
+			console.log(list[i]);
+		}
+	}) */
+	//284번 댓글 테스트 삭제 
+	/*  replyService.remove(284,(count)=>{
+		 console.log(count);
+		 if(count === "success"){
+			 alert("removed");
+		 }
+	 },(err)=>{
+		 alert("ERROR....");
+	 }
+	 ) */
+	//22번 댓글 수정 
+	/*  replyService.update({
+		 rno : 22 ,
+		 bno : bnoValue,
+		 reply : "Modified Reply...."
+	 },(result) => {
+		 alert("수정완료")
+	 }); */
+	//댓글 조회 처리 
+	/* replyService.get(226,(data)=>{console.log(data)}); */
+
 	$(document).ready(function() {
+		console.log(replyService);
 		var operForm = $("#operForm");
-		
-		$("button[data-oper='modify']").on("click",function(e){
-			operForm.attr("action","/board/modify").submit();
+
+		$("button[data-oper='modify']").on("click", function(e) {
+			operForm.attr("action", "/board/modify").submit();
 		});
-		
-		$("button[data-oper='list']").on("click",function(e){
-			operForm.attr("action","/board/list").submit();
+
+		$("button[data-oper='list']").on("click", function(e) {
+			operForm.attr("action", "/board/list").submit();
 		});
-		
+
 	});
 </script>
 <title>SB Admin 2 - Bootstrap Admin Theme</title>
@@ -66,21 +99,53 @@
 					</div>
 					<button data-oper='modify' class="btn btn-default">Modify</button>
 					<button data-oper='list' class="btn btn-info">List</button>
-					
-					<form id="operForm" action="/board/modify"method="get">
-						<input type="hidden" id="bno" name="bno" value='<c:out value="${board.bno}"/>'>
-						<input type="hidden" name="pageNum" value='<c:out value="${cri.pageNum }"/>'>
-						<input type="hidden" name="amount" value='<c:out value="${cri.amount }"/>'>
-						<input type="hidden" name="keyword" value='<c:out value="${cri.keyword }"/>'>
-						<input type="hidden" name="type" value='<c:out value="${cri.type }"/>'>
-						
+
+					<form id="operForm" action="/board/modify" method="get">
+						<input type="hidden" id="bno" name="bno"
+							value='<c:out value="${board.bno}"/>'> <input
+							type="hidden" name="pageNum"
+							value='<c:out value="${cri.pageNum }"/>'> <input
+							type="hidden" name="amount"
+							value='<c:out value="${cri.amount }"/>'> <input
+							type="hidden" name="keyword"
+							value='<c:out value="${cri.keyword }"/>'> <input
+							type="hidden" name="type" value='<c:out value="${cri.type }"/>'>
+
 					</form>
 				</div>
 				<!-- /.panel-body -->
 			</div>
 			<!-- /.panel -->
+			<div class='row'>
+				<div class="col-lg-12">
+					<!-- /.panel -->
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<i class="fa fa-comments fa-fw"></i> Reply
+						</div>
+						<!-- /.panel-heading -->
+						<div class="panel-body">
+							<ul class="chat">
+								<!-- start reply -->
+								<li class="left clearfix" data-rno='12'>
+									<div>
+										<div class="header">
+											<strong class="primary-font">user00</strong> <small
+												class="pull-right text-muted">2018-01-01 13:13</small>
+										</div>
+										<p>
+											GOOD JOB
+											<!/p>
+									</div> <!-- end reply -->
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<!-- /.col-lg-12 -->
+
 	</div>
 
 	</div>
