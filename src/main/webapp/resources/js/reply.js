@@ -31,7 +31,8 @@ var replyService = (()=>{
 		$.getJSON("/replies/pages/"+bno+"/"+page+".json",
 				data=>{
 					if(callback){
-						callback(data);
+						//callback(data); 댓글의 목록만 가져오는경우
+						callback(data.replyCnt,data.list); //댓글의 숫자와 목록을 가져오는경우
 					}
 				}).fail((xhr,status,err)=>{
 			if (error) {

@@ -15,7 +15,8 @@ public interface ReplyMapper {
 	public int delete(Long bno);
 	//수정 
 	public int update (ReplyVO reply);
-	//Criteria
+	//Criteria 리플목록 보여주기
 	public List<ReplyVO> getListWithPaging(@Param("cri") Criteria cri,@Param("bno") Long bno);
-
+	//게시물의 리플의 전체 수 
+	public int getCountByBno(Long bno);
 }

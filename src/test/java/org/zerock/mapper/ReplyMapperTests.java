@@ -75,15 +75,22 @@ public class ReplyMapperTests {
 		log.info("UPDATE COUNT : " + count);
 	}
 	//댓글목록 
-	@Test
+/*	@Test
 	public void testList() {
 		Criteria cri = new Criteria();
 		//16899L
 		List<ReplyVO> replies = mapper.getListWithPaging (cri,bnoArr[0]);
 		
 		replies.forEach(reply -> log.info(reply));
+	}*/
+	//댓글 목록(페이징)
+	@Test
+	public void testList2() {
+		Criteria cri = new Criteria(2, 10);
+		//16899L
+		List<ReplyVO> replies = mapper.getListWithPaging(cri,16899L);
+		replies.forEach(reply -> log.info(reply));
 	}
-	
 	
 	//연동 확인
 	@Test

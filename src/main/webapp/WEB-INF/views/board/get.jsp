@@ -79,38 +79,69 @@
 							<i class="fa fa-comments fa-fw"></i> Reply
 						</div> -->
 						<!-- /.panel-heading -->
-						<div class ="panel-heading">
-							<i class ="fa fa-comments fa-fw"></i>Reply
-							<button id='addReplyBtn' class ='btn btn-primary btn-xs pull-right'>New Reply</button>
+						<div class="panel-heading">
+							<i class="fa fa-comments fa-fw"></i>Reply
+							<button id='addReplyBtn'
+								class='btn btn-primary btn-xs pull-right'>New Reply</button>
 						</div>
 						<div class="panel-body">
 							<ul class="chat">
-								<!-- start reply -->
-								<li class="left clearfix" data-rno='12'>
-									<div>
-										<div class="header">
-											<strong class="primary-font">user00</strong> <small
-												class="pull-right text-muted">2018-01-01 13:13</small>
-										</div>
-										<p>
-											GOOD JOB
-											<!/p>
-									</div> <!-- end reply -->
-								</li>
+								<!-- 리플이 보여지는는 부분 -->		
 							</ul>
+						</div>
+						<!--/.panel .chat-panel 추가  -->
+						<div class="panel-footer">
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		<!-- /.col-lg-12 -->
+		<!-- Modal -->
 
-	</div>
-	
-	<!-- /#page-wrapper -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">REPLY MODAL</h4>
+					</div>
+					<div class="modal-body"><div class="form-group">
+							<label>Reply</label> <input class="form-control" name="reply"
+								value="New Reply!!!!!">
+						</div>
+
+						<div class="form-group">
+							<label>Replyer</label> <input class="form-control" name="replyer"
+								value="replyer">
+						</div>
+
+						<div class="form-group">
+							<label>Reply Date</label> <input class="form-control"
+								name="replyDate" value="">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button id="modalModBtn" type="button" class="btn btn-warning">Modify</button>
+						<button id="modalRemoveBtn" type="button" class="btn btn-danger">Remove</button>
+						<button id="modalRegisterBtn" type="button"
+							class="btn btn-primary">Register</button>
+						<button id="modalCloseBtn" type="button" class="btn btn-default">Close</button>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+
+		<!-- /#page-wrapper -->
 	</div>
 	<!-- /#wrapper -->
 	<%@include file="../includes/footer.jsp"%>
+
 	<script type="text/javascript">
 	
 
@@ -120,25 +151,175 @@
 		var replyUL = $(".chat"); 
 		
 		showList(1);
-		
+		//리스트 갱신 함수 여러번 사용하기때문에 arrowfunction을 사용하지 않ㄴ다. 
 	 	 function showList(page){
-			replyService.getList({bno:bnoValue,page: page || 1},(list) => {
-				var str="";
-				if(list == null || list.length == 0){
-					replyUL.html("");
+			replyService.getList({bno:bnoValue,page: page || 1},function(replyCnt,list){
+				
+				console.log("replyCnt: "+ replyCnt);
+				console.log("list: "+ list);
+				console.log(list);
+				
+				if(page ==-1){
+					pageNum = Math.ceil(replyCnt/10.0);
+					showList(pageNum);
 					return;
 				}
-				for(var i = 0 ,len = list.length || 0 ; i<len; i++){
+				
+				var str="";
+				
+				if(list == null || list.length == 0){
+					return;
+				}
+				
+				for(var i = 0 , len = list.length || 0 ; i<len; i++){
 					str += "<li class='left clearfix' data-rno = '"+list[i].rno+"'>";
 					str += " <div><div class='header'><strong class='primary-font'>"+list[i].replyer+"</strong>";
 					str += " <small class= 'pull-right text-muted'>"+replyService.displayTime(list[i].replyDate)+ "</small></div>";
 					str += " <p>"+list[i].reply+"</p></div></li>";
 				}
 				replyUL.html(str);
+				
+				showReplyPage(replyCnt);
 			});//end func
 		
 		};//end showList 
 		
+		//<div class='panel-footer'> 에 댓글 페이지 번호를 출력하는 로직은 show ReplyPage()는 아래와 같다 
+		var pageNum = 1;
+		var replyPageFooter = $(".panel-footer");
+		
+		function showReplyPage(replyCnt){
+			
+			var endNum = Math.ceil(pageNum / 10.0)*10;
+			var startNum = endNum -9 ;
+			
+			var prev = startNum != 1;
+			var next = false;
+			
+			if (endNum * 10 >= replyCnt){
+				endNum = Math.ceil(replyCnt/10.0);
+			}
+			if (endNum * 10 < replyCnt){
+				endNum = Math.ceil(replyCnt/10.0);
+			}
+			
+			var str ="<ul class ='pagination pull-right'>";
+			
+			if(prev){
+				str+= "<li class='page-item'><a class='page-link' href='"+(startNum-1)+"'>Previos</a></li>";
+			}
+			
+			for(var i = startNum ; i<endNum ; i++){
+				var active = pageNum == i? "active" : "";
+				str += "<li class='page-item "+active+"'><a class='page-link' href='"+i+"'>"+i+"</a></li>";
+			}
+			
+			if(next){
+				str += "<li class ='page-item'><a class='page-link' href='"+(endNum + 1)+"'>Next</a></li>";
+			}
+			str += "</ul></div>";
+			
+			console.log(str);
+			replyPageFooter.html(str);
+		}
+		//페이지 번호를 클릭했을때 새로운 댓글을 가져오도록 하는 부분
+		replyPageFooter.on("click","li a",function(e){
+			e.preventDefault();
+			console.log("page click");
+			
+			var targetPageNum = $(this).attr("href");
+			
+			console.log("targetPageNum :" +targetPageNum);
+			
+			pageNum = targetPageNum;
+			
+			showList(pageNum);
+		})
+		//modal
+		var modal = $(".modal");
+		
+		var modalInputReply = modal.find("input[name='reply']");
+		var modalInputReplyer = modal.find("input[name='replyer']");
+		var modalInputReplyDate= modal.find("input[name='replyDate']");
+		
+		var modalModBtn = $("#modalModBtn");
+		var modalRemoveBtn = $("#modalRemoveBtn");
+		var modalRegisterBtn = $("#modalRegisterBtn");
+		
+		$("#addReplyBtn").on("click",(e) => {
+			
+			modal.find("input").val("");
+			modalInputReplyDate.closest("div").hide();
+			modal.find("button[id != 'modalCloseBtn']").hide();
+			
+			modalRegisterBtn.show();
+			
+			$(".modal").modal("show");
+		});
+		
+		//새로운 댓글 추가처리
+		modalRegisterBtn.on("click",(e)=>{
+			//등록 버튼을 클릭하면 내용을 JSON형식으로 변환
+			var reply ={
+					reply: modalInputReply.val(),
+					replyer:modalInputReplyer.val(),
+					bno: bnoValue
+			};
+			//모듈 add사용 
+			replyService.add(reply, (result) => {
+				alert(result);
+				
+				modal.find("input").val("");
+				modal.modal("hide");
+				
+				//showList(1);
+				showList(-1);
+			});
+			
+		})
+		//댓글의 클릭 이벤트 처리 
+		$(".chat").on("click","li",function(e){
+			
+			var rno = $(this).data("rno");
+			
+			replyService.get(rno,(reply) => {
+				modalInputReply.val(reply.reply);
+				modalInputReplyer.val(reply.replyer);
+				modalInputReplyDate.val(replyService.displayTime( reply.replyDate)).attr("readonly","readonly");
+				modal.data("rno", reply.rno);
+				
+				modal.find("button[id != 'modalCloseBtn']").hide();
+				modalModBtn.show();
+				modalRemoveBtn.show();
+				
+				$(".modal").modal("show");
+			});
+		});
+		//댓글 수정 이벤트 
+		modalModBtn.on("click", (e)=>{
+			//json 형식으로  rno와 reply내용을 만듬
+			var reply = {rno : modal.data("rno"), reply: modalInputReply.val()};
+			//수정
+			replyService.update(reply, (result)=>{
+				alert(result);
+				modal.modal("hide");
+				showList(pageNum);
+			})
+		})
+		//댓글 삭제 이벤트 
+		modalRemoveBtn.on("click", (e)=>{
+			//리플 번호를 가져옴
+			var rno = modal.data("rno");
+			//삭제
+			replyService.remove(rno, (result)=>{
+				
+				alert(result);
+				modal.modal("hide");
+				showList(pageNum);
+			})
+		})
+		
+		/*페이지를 전환  */
 		var operForm = $("#operForm");
 
 		$("button[data-oper='modify']").on("click", function(e) {
