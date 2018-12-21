@@ -59,5 +59,5 @@ public class BoardServiceImpl implements BoardService{
 		log.info("getList.......");
 		return mapper.getList();
 	}*/
-
+	
 }
