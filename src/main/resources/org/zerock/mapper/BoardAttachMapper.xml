@@ -13,7 +13,7 @@
 		delete from tbl_attach where uuid = # {uuid}
 	</delete>
 	
-	<select id="findbybno" resultType="org.zerock.domain.BoardAttachVO">
-		select * from tbl_attach where BNO #{bno}
+	<select id="findByBno" resultType="org.zerock.domain.BoardAttachVO">
+		select * from tbl_attach where BNO = #{bno}
 	</select>
 </mapper>
