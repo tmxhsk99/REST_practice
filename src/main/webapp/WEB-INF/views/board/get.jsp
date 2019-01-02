@@ -130,7 +130,7 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="panel panel-default">
-						<div class="panel pane-default">
+						<div class="panel panel-default">
 							<div class="panel-heading">Files</div>
 							<!-- panel heading -->
 							<div class="panel-body">
