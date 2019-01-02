@@ -1,6 +1,9 @@
 package org.zerock.controller;
 
 import java.lang.ProcessBuilder.Redirect;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,7 @@ import org.zerock.service.BoardService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import oracle.net.aso.a;
 
 @Controller
 @Log4j
@@ -52,15 +56,24 @@ public class BoardController {
 	@PostMapping("/modify")
 	public String modify(BoardVO board, RedirectAttributes rttr ,@ModelAttribute("cri") Criteria cri) {
 		log.info("modify :" + board);
+		
 		if(service.modify(board)) {
 			rttr.addFlashAttribute("result","success");
 		}	
 		return "redirect:/board/list"+cri.getListLink();
 	}
+	
 	@PostMapping("/remove")
 	public String remove(@RequestParam("bno") Long bno, RedirectAttributes rttr, @ModelAttribute("cri") Criteria cri) {
 		log.info("remove...."+bno);
+		System.out.println("삭제 되는 글 번호"+bno);
+		//그 번호에 맞는 첨부파일리스트를 불러옴
+		List<BoardAttachVO> attachList = service.getAttachList(bno);
+		System.out.println(service.remove(bno));
 		if(service.remove(bno)) {
+			//deleteAttachFiles
+			
+			deleteFiles(attachList);
 			rttr.addFlashAttribute("result","success");
 		}
 		return "redirect:/board/list"+cri.getListLink();
@@ -92,6 +105,32 @@ public class BoardController {
 		log.info("getAttachList" + bno);
 		System.out.println("getAttachList" + bno);
 		return new ResponseEntity<>(service.getAttachList(bno),HttpStatus.OK);
+		
+	}
+	
+	private void deleteFiles(List<BoardAttachVO> attachList) {
+		if(attachList == null || attachList.size() == 0) {
+			return;
+		}
+		log.info("delete attach files...................");
+		log.info(attachList);
+		
+		attachList.forEach(attach->{
+			try {
+				Path file = Paths.get("C:\\upload\\"+attach.getUploadPath()+attach.getUuid()+"_"+attach.getFileName());
+				
+				Files.deleteIfExists(file);
+				if(Files.probeContentType(file).startsWith("image")) {
+					Path thumNail = Paths.get("C:\\upload\\"+attach.getUploadPath()+"\\s_"+attach.getUploadPath()+"_"+attach.getFileName());
+					
+					Files.delete(thumNail);
+				}
+						
+			} catch (Exception e) {
+				log.error("delete file error" + e.getMessage());
+			}//end catch
+			
+		});//end foreach
 		
 	}
 	

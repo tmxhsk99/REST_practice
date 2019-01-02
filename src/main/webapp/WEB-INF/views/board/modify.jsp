@@ -31,7 +31,7 @@
 
 					<div class="form-group">
 						<label>Bno</label> <input class="form-control" name='bno'
-							value='<c:out value="${board.bno }"/>' readonly="readonly">
+							value='<c:out value="${board.bno}"/>' readonly="readonly">
 					</div>
 
 					<div class="form-group">
@@ -83,15 +83,13 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-
 		var formObj = $("form");
 
 		$('button').on("click", function(e) {
 
 			e.preventDefault();
-
 			var operation = $(this).data("oper");
-
+			alert(operation);
 			console.log(operation);
 			
 			if (operation === 'remove') {
@@ -106,10 +104,10 @@
 				var amountTag = $("input[name='amount']").clone();
 				var keywordTag = $("input[name='amount']").clone();
 				var typeTag = $("input[name='amount']").clone();
-				
+
 				formObj.empty();
-				formObj.(amountTag);
-				formObj.(pageNumTag);
+				//formObj.(amountTag);
+				//formObj.(pageNumTag);
 			}
 
 			formObj.submit();
